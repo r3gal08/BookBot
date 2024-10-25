@@ -1,0 +1,7 @@
+mediapipe
+# Recall headless opencv package....
+opencv-python
+numpy
+pytesseract
+ollama
+python-dotenv

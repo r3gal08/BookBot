@@ -1,0 +1,6 @@
+# .gitignore
+.env
+.archive/
+.idea/
+.venv/
+.photos/
