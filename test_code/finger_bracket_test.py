@@ -16,13 +16,6 @@ photo_num = 0
 
 rel_photo_path = "../photos/finger_bracket/"
 
-# Function to focus the camera
-def focus_camera(camera):
-    # Attempt to set focus; you might need to adjust this depending on your camera
-    focus_value = 50  # Example focus value (0-100), adjust as necessary
-    camera.set(cv2.CAP_PROP_FOCUS, focus_value)
-    time.sleep(1)  # Allow time for the camera to adjust focus
-
 # min_detection_confidence: This is the minimum confidence level required for MediaPipe to initially detect a hand.
 #                           A value of 0.7 (or 70%) means that if the confidence score of detection is below 70%, it won't consider the hand detected in that frame.
 # min_tracking_confidence: This is the minimum confidence level required to continue tracking the hand landmarks once a hand is initially detected.
@@ -31,8 +24,6 @@ def focus_camera(camera):
 with mp_hands.Hands(max_num_hands=1, min_detection_confidence=0.7, min_tracking_confidence=0.7) as hands:
 
     while cap.isOpened():
-
-
         ret, frame = cap.read()
         if not ret:
             break
@@ -52,11 +43,15 @@ with mp_hands.Hands(max_num_hands=1, min_detection_confidence=0.7, min_tracking_
                 thumb_tip = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP]
 
                 # Convert normalized coordinates to pixel coordinates
-                index_finger_y = int(index_finger_tip.y * h)
-                thumb_y = int(thumb_tip.y * h)
+                index_finger_x, index_finger_y = int(index_finger_tip.x * w), int(index_finger_tip.y * h)
+                thumb_x, thumb_y = int(thumb_tip.x * w), int(thumb_tip.y * h)
 
                 # Draw hand landmarks on the frame
-                mp_drawing.draw_landmarks(frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
+                # mp_drawing.draw_landmarks(frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
+
+                # Draw circles only at the index fingertip and thumb tip
+                cv2.circle(frame, (index_finger_x, index_finger_y), 10, (0, 255, 0), -1)  # Green for index finger
+                cv2.circle(frame, (thumb_x, thumb_y), 10, (255, 0, 0), -1)  # Blue for thumb
 
                 # Draw the horizontal lines at thumb and index finger y-coordinates
                 cv2.line(frame, (0, index_finger_y), (w, index_finger_y), (0, 255, 0), 2)
@@ -74,7 +69,6 @@ with mp_hands.Hands(max_num_hands=1, min_detection_confidence=0.7, min_tracking_
             if index_finger_y is not None and thumb_y is not None:
                 # Ensure correct cropping direction
                 y1, y2 = sorted((index_finger_y, thumb_y))
-                focus_camera(cap)
 
                 # Crop the frame between thumb and index finger lines
                 cropped_frame = frame[y1:y2, :]
