@@ -2,7 +2,7 @@ import cv2
 import pytesseract
 import numpy as np
 
-image_path = './photo.png'
+image_path = '../photos/line_bracket_test.jpg'
 extracted_text = ""
 
 # Read the image
