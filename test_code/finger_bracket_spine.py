@@ -1,3 +1,6 @@
+# The entire point of this test code is to find a way to detect a third boundary that splits the right and left
+# side of text to ensure we crop the photo of only the left or right side
+
 import cv2
 import mediapipe as mp
 import numpy as np
@@ -30,7 +33,7 @@ with mp_hands.Hands(max_num_hands=1, min_detection_confidence=0.7, min_tracking_
         h, w, _ = frame.shape
 
 
-        # TODO: Implement something similar to this, IE ignoreing a certain percentage of the frame width for edge detection
+        # TODO: Implement something similar to this, IE ignoring a certain percentage of the frame width for edge detection
         # Define a region of interest (ROI) to ignore edges near the left and right borders
         # roi_width = int(frame.shape[1] * 0.2)  # Ignore the outer 20% of the frame width
         # edges[:, :roi_width] = 0               # Ignore left border
