@@ -3,12 +3,13 @@ import os
 from huggingface_hub import InferenceClient
 from functions.load_api_token import load_api_token     # Module for loading API token(s)
 
-def overlord_text_extract(image_path: str) -> str:
+def overlord_text_extract(base64_image: str) -> str:
     """
-    This function takes an image path, processes the image, sends it to a Hugging Face LLM model,
+    This function takes a Base64-encoded image string, decodes it to bytes,
+    processes the image, sends it to a Hugging Face LLM model,
     and returns the extracted text from the image.
 
-    :param image_path: Path to the image file to be processed
+    :param base64_image: Base64-encoded image string
     :return: Extracted text from the image
     """
 
@@ -26,14 +27,7 @@ def overlord_text_extract(image_path: str) -> str:
 
     client = InferenceClient(api_key=api_token)
 
-    # Open the image and encode it to base64
-    try:
-        with open(image_path, "rb") as f:
-            base64_image = base64.b64encode(f.read()).decode("utf-8")
-        image_url = f"data:image/jpeg;base64,{base64_image}"
-    except FileNotFoundError:
-        print(f"File not found: {image_path}")
-        return None
+    image_url = f"data:image/jpeg;base64,{base64_image}"
 
     # Prepare the message payload and send the request to the model
     response_text = ""
@@ -61,7 +55,3 @@ def overlord_text_extract(image_path: str) -> str:
             response_text += message.choices[0].delta.content
 
     return response_text.strip()
-
-# Example usage:
-# extracted_text = extract_text_from_image("../photos/photo_gray_full.jpg")
-# print(extracted_text)
